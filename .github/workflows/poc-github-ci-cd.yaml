@@ -1,4 +1,4 @@
-name: datastructures-algorithms-ci-cd
+name: poc-github-ci-cd
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, release ]
 
 jobs:
-  lint-build-test:
+  lint-build:
     runs-on: windows-latest
 
     steps:
@@ -36,7 +36,6 @@ jobs:
         clang-tidy --version
         $files = Get-ChildItem -Recurse -Path source -Include *.cpp,*.cc,*.cxx -File
 
-        # These source/.* files would be checked using .clang-tidy maintained at projectroot
         foreach ($file in $files) {
           Write-Host "Running clang-tidy on source $($file.FullName)"
           clang-tidy -p build "$($file.FullName)" --warnings-as-errors=*
@@ -45,6 +44,15 @@ jobs:
     - name: Build
       shell: pwsh
       run: cmake --build build
+
+  test-job:
+    needs: lint-build
+    runs-on: windows-latest
+    environment: test-approval
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
     - name: Run tests
       shell: pwsh
