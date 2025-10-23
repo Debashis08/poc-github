@@ -45,14 +45,27 @@ jobs:
       shell: pwsh
       run: cmake --build build
 
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: build/
+        retention-days: 1
+
   test-job:
     needs: lint-build
     runs-on: windows-latest
-    environment: test-approval
+    environment: test-approval   # Manual approval required before running
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+        path: build/
 
     - name: Run tests
       shell: pwsh
