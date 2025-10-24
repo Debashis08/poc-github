@@ -5,6 +5,17 @@ on:
     branches: [ main, release ]
   pull_request:
     branches: [ main, release ]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Select version bump type"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
 
 jobs:
   lint-build:
@@ -37,7 +48,7 @@ jobs:
         $files = Get-ChildItem -Recurse -Path source -Include *.cpp,*.cc,*.cxx -File
 
         foreach ($file in $files) {
-          Write-Host "Running clang-tidy on source $($file.FullName)"
+          Write-Host "Running clang-tidy on $($file.FullName)"
           clang-tidy -p build "$($file.FullName)" --warnings-as-errors=*
         }
 
@@ -55,7 +66,7 @@ jobs:
   test-job:
     needs: lint-build
     runs-on: windows-latest
-    environment: test-approval   # Manual approval required before running
+    environment: test-approval  # Manual approval required before running
 
     steps:
     - name: Checkout code
@@ -70,3 +81,61 @@ jobs:
     - name: Run tests
       shell: pwsh
       run: ctest --test-dir build --output-on-failure
+
+  create-tag:
+    needs: test-job
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          latest=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+
+      - name: Bump version
+        id: bump
+        run: |
+          latest=${{ steps.get_tag.outputs.latest }}
+          bump=${{ github.event.inputs.bump }}
+          echo "Bumping $latest with $bump"
+
+          version=${latest#v}
+          IFS='.' read -r major minor patch <<< "$version"
+
+          case "$bump" in
+            major)
+              ((major++)); minor=0; patch=0;;
+            minor)
+              ((minor++)); patch=0;;
+            patch)
+              ((patch++));;
+          esac
+
+          new_tag="v${major}.${minor}.${patch}"
+          echo "new_tag=$new_tag" >> $GITHUB_OUTPUT
+
+      - name: Create Git Tag
+        run: |
+          git tag ${{ steps.bump.outputs.new_tag }}
+          git push origin ${{ steps.bump.outputs.new_tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.bump.outputs.new_tag }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
