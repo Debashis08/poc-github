@@ -172,9 +172,15 @@ jobs:
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          # Use awk to find the text between "**Release Summary**" and "**Version Bump Type**"
-          SUMMARY=$(echo "$PR_BODY" | awk 'BEGIN{RS="**Release Summary**"} {print $1}' | awk 'BEGIN{FS="**Version Bump Type**"} {print $2}')
+          # Use an awk "state machine" to extract text between the two markers.
+          # We use "<<<" (a "here string") to safely pass the multiline $PR_BODY to awk.
+          # We must escape the '*' characters with '\' for the regex.
           
+          # 1. /\*\*Release Summary\*\*/{f=1; next} : When we see the START marker, set flag 'f' to 1 and skip to the next line.
+          # 2. /\*\*Version Bump Type\*\*/{f=0}      : When we see the END marker, set flag 'f' to 0.
+          # 3. f                                 : If flag 'f' is 1 (true), print the current line.
+          SUMMARY=$(awk '/\*\*Release Summary\*\*/{f=1; next} /\*\*Version Bump Type\*\*/{f=0} f' <<< "$PR_BODY")
+
           # Use multiline string syntax for GITHUB_OUTPUT
           echo "summary<<EOF" >> $GITHUB_OUTPUT
           echo "$SUMMARY" >> $GITHUB_OUTPUT
