@@ -1,22 +1,17 @@
 name: poc-github-validate
 
-# Triggers only when a PR to 'main' is closed
+# Triggers when a PR is opened or updated, targeting the 'release' branch
 on:
   pull_request:
-    types: [closed] # Run when a PR is closed
-    branches:
-      - 'main'      # Only when the PR's target branch is 'main'
-
-# Permissions required for the tag/release job
-permissions:
-  contents: write      # To create/push tags AND create releases
-  pull-requests: read  # To read the PR body
+    types: [opened, synchronize]
+    branches: [release]
 
 jobs:
   # --- Job 1: Lint, Build, and Test ---
   lint-build-test:
-    # This job only runs if the PR was actually merged
-    if: github.event.pull_request.merged == true
+    
+    # This job will ONLY run if the PR's source branch starts with 'feature-'
+    if: startsWith(github.head_ref, 'feature-')
     runs-on: windows-latest
 
     steps:

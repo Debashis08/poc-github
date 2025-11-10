@@ -60,7 +60,7 @@ jobs:
       run: ctest --test-dir build --output-on-failure
 
   # --- Job 2: Create Tag and Release ---
-  create_tag_and_release:
+  create-tag-and-release:
     # This job MUST wait for the 'lint-build-test' job to succeed
     needs: lint-build-test
     
