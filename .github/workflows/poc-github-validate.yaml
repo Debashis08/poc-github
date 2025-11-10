@@ -11,7 +11,7 @@ jobs:
   lint-build-test:
     
     # This job will ONLY run if the PR's source branch starts with 'feature-'
-    if: startsWith(github.head_ref, 'feature-')
+    if: startsWith(github.event.pull_request.head.ref, 'feature-')
     runs-on: windows-latest
 
     steps:
