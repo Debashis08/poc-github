@@ -1,0 +1,38 @@
+{
+  "categories": [
+    {
+      "title": "### Features",
+      "labels": [],
+      "pr_body_regex": "",
+      "pr_title_regex": "^feat(\\(.*\\))?:"
+    },
+    {
+      "title": "### Bug Fixes",
+      "labels": [],
+      "pr_title_regex": "^fix(\\(.*\\))?:"
+    },
+    {
+      "title": "### Build System & Tooling",
+      "labels": [],
+      "pr_title_regex": "^(build|ci|chore|env)(\\(.*\\))?:"
+    },
+    {
+      "title": "### Core & Refactoring",
+      "labels": [],
+      "pr_title_regex": "^(refactor|perf)(\\(.*\\))?:"
+    },
+    {
+      "title": "### Documentation",
+      "labels": [],
+      "pr_title_regex": "^docs(\\(.*\\))?:"
+    },
+    {
+      "title": "### Uncategorized Changes",
+      "labels": []
+    }
+  ],
+  "ignore_labels": [
+    "skip-changelog"
+  ],
+  "template": "### Changes and updates in this release\n\n#{{CATEGORIES}}\n\n**Full Changelog:** https://github.com/#{{OWNER}}/#{{REPO}}/compare/#{{PREVIOUS_TAG}}...#{{TO_TAG}}"
+}
