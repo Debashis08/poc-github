@@ -22,7 +22,7 @@ endif()
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_subdirectory(include)
-add_subdirectory(source)
+add_subdirectory(src)
 
 cmake_policy(SET CMP0135 NEW)
 include(FetchContent)
@@ -37,4 +37,4 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 enable_testing()
 
-add_subdirectory(test)
+add_subdirectory(tests)
