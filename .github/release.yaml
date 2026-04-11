@@ -4,7 +4,7 @@ template: |
   
   **Full Changelog:** https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
 
-change-template: '- $TITLE [$NUMBER]'
+change-template: '- $TITLE [#$NUMBER]'
 
 categories:
   - title: 'Basics'
