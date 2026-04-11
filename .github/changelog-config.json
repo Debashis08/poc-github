@@ -1,7 +1,8 @@
 {
   "pr_template": "- #{{TITLE}} ([##{{NUMBER}}](https://github.com/#{{OWNER}}/#{{REPO}}/pull/#{{NUMBER}}))",
-  "exclude_labels": [
-    "ignore-pr"
+  "ignore_labels": [
+    "ignore-pr",
+    "skip-changelog"
   ],
   "label_extractors": [
     {
@@ -13,22 +14,27 @@
   "categories": [
     {
       "title": "## 🚀 Features",
+      "labels": [],
       "pr_title_regex": "^feat(\\(.*\\))?:"
     },
     {
       "title": "## 🐛 Bug Fixes",
+      "labels": [],
       "pr_title_regex": "^fix(\\(.*\\))?:"
     },
     {
       "title": "## 🛠 Build System & Tooling",
+      "labels": [],
       "pr_title_regex": "^(build|ci|chore|env)(\\(.*\\))?:"
     },
     {
       "title": "## ♻️ Core & Refactoring",
+      "labels": [],
       "pr_title_regex": "^(refactor|perf)(\\(.*\\))?:"
     },
     {
       "title": "## 📝 Documentation",
+      "labels": [],
       "pr_title_regex": "^docs(\\(.*\\))?:"
     }
   ],
