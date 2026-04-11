@@ -140,25 +140,21 @@ jobs:
           echo "Tagging commit $MERGE_COMMIT_SHA as $NEW_TAG"
           git tag $NEW_TAG $MERGE_COMMIT_SHA
           git push origin $NEW_TAG
-          
-      # Step C: Generate Auto-Notes via Conventional Commits
-      - name: Build Changelog
-        id: build_changelog 
-        uses: mikepenz/release-changelog-builder-action@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          configuration: ".github/changelog-config.json"
-          # Explicitly tell the action which tags to compare
-          fromTag: ${{ steps.get_latest_tag.outputs.latest_tag }}
-          toTag: ${{ steps.calc_new_tag.outputs.new_tag }}
-          
-      # Step D: Publish GitHub Release
+      
+      # Step D: Generate Auto-Notes and Publish
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.calc_new_tag.outputs.new_tag }}
-          name: ${{ steps.calc_new_tag.outputs.new_tag }}
-          body: ${{ steps.build_changelog.outputs.changelog }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: release-drafter/release-drafter@v6
+        with:
+          # Uses your .github/release.yaml to categorize changes
+          config-name: release.yaml
+          
+          # We force it to use the tag you just calculated and pushed
+          tag: ${{ steps.calc_new_tag.outputs.new_tag }}
+          name: "${{ steps.calc_new_tag.outputs.new_tag }}"
+          version: ${{ steps.calc_new_tag.outputs.new_tag }}
+          
+          # This makes it a real release (not a draft)
+          publish: true
+        
