@@ -38,5 +38,11 @@
       "pr_title_regex": "^docs(\\(.*\\))?:"
     }
   ],
+  "replacers": [
+    {
+      "search": "/- (feat|fix|build|ci|chore|env|refactor|perf|docs)(\\(.*?\\))?:\\s*/ig",
+      "replace": "- "
+    }
+  ],
   "template": "### Changes and updates in this release\n\n#{{CHANGELOG}}\n\n**Full Changelog:** https://github.com/#{{OWNER}}/#{{REPO}}/compare/#{{FROM_TAG}}...#{{TO_TAG}}"
 }
