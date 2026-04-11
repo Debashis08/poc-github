@@ -1,38 +1,42 @@
 {
+  "pr_template": "- #{{TITLE}} (#{{NUMBER}})",
+  "label_extractors": [
+    {
+      "pattern": "^(?!feat|fix|build|ci|chore|env|refactor|perf|docs).*",
+      "target": "ignore-pr",
+      "on_property": "title"
+    }
+  ],
+  "ignore_labels": [
+    "ignore-pr",
+    "skip-changelog"
+  ],
   "categories": [
     {
-      "title": "### Features",
+      "title": "## 🚀 Features",
       "labels": [],
-      "pr_body_regex": "",
       "pr_title_regex": "^feat(\\(.*\\))?:"
     },
     {
-      "title": "### Bug Fixes",
+      "title": "## 🐛 Bug Fixes",
       "labels": [],
       "pr_title_regex": "^fix(\\(.*\\))?:"
     },
     {
-      "title": "### Build System & Tooling",
+      "title": "## 🛠 Build System & Tooling",
       "labels": [],
       "pr_title_regex": "^(build|ci|chore|env)(\\(.*\\))?:"
     },
     {
-      "title": "### Core & Refactoring",
+      "title": "## ♻️ Core & Refactoring",
       "labels": [],
       "pr_title_regex": "^(refactor|perf)(\\(.*\\))?:"
     },
     {
-      "title": "### Documentation",
+      "title": "## 📝 Documentation",
       "labels": [],
       "pr_title_regex": "^docs(\\(.*\\))?:"
-    },
-    {
-      "title": "### Uncategorized Changes",
-      "labels": []
     }
-  ],
-  "ignore_labels": [
-    "skip-changelog"
   ],
   "template": "### Changes and updates in this release\n\n#{{CHANGELOG}}\n\n**Full Changelog:** https://github.com/#{{OWNER}}/#{{REPO}}/compare/#{{FROM_TAG}}...#{{TO_TAG}}"
 }
